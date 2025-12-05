@@ -1,0 +1,7 @@
+services:
+  transcriber:
+    build: .
+    volumes:
+      - ./input:/app/input
+      - ./output:/app/output
+    command: python transcribe.py 

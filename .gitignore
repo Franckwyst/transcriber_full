@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Dossiers contenant des fichiers audio ou résultats
+input/
+output/
+app/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnements virtuels
+.venv/
+venv/
