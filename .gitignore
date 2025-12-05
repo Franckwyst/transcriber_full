@@ -1,12 +1,10 @@
+cd /Users/franckwystyrk/transcriber_full
+
+cat > .gitignore << 'EOF'
 # macOS
 .DS_Store
 
-# Dossiers contenant des fichiers audio ou résultats
-input/
-output/
-app/
-
-# Python
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
@@ -15,3 +13,30 @@ __pycache__/
 # Environnements virtuels
 .venv/
 venv/
+
+# Tous les fichiers audio
+*.m4a
+*.mp3
+*.wav
+*.aac
+*.flac
+
+# Fichiers générés par Whisper
+*.txt
+*.srt
+*.vtt
+
+# Dossiers contenant des fichiers audio ou résultats
+input/
+output/
+app/input/
+
+# Dossiers de morceaux audio
+input/**/*_chunks/
+app/input/**/*_chunks/
+input/**/audio_chunks/
+app/input/**/audio_chunks/
+
+# VS Code
+.vscode/
+EOF
