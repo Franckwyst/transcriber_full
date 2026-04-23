@@ -117,6 +117,82 @@ input/mon-audio_chunks/
 
 avec des fichiers intermédiaires `.wav` utilisés pour la transcription.
 
+## Explication du chunking
+
+Le "chunking" consiste à découper un fichier audio long en plusieurs petits morceaux avant de le transcrire.
+
+Dans ce projet, le chunking se déclenche automatiquement quand un fichier dépasse `20` minutes, car la variable `MAX_CHUNK_MINUTES` est actuellement réglée à `20`.
+
+### Pourquoi découper l'audio
+
+Le découpage sert à éviter plusieurs problèmes :
+
+- consommer trop de mémoire d'un coup
+- ralentir fortement la transcription
+- rendre le traitement plus fragile sur les gros fichiers
+
+En pratique, au lieu d'envoyer un très long audio à Whisper en une seule fois, le script le traite morceau par morceau.
+
+### Comment ça se passe concrètement
+
+Prenons un fichier de `52` minutes :
+
+- le script lit le fichier audio complet
+- il calcule une taille maximale de morceau de `20` minutes
+- il crée plusieurs segments successifs
+- il exporte ces segments en fichiers `.wav`
+- il transcrit chaque segment séparément
+- il regroupe ensuite tous les textes dans le bon ordre dans un seul fichier final
+
+Dans cet exemple, on obtiendrait en général :
+
+- un morceau de 20 minutes
+- un deuxième morceau de 20 minutes
+- un dernier morceau d'environ 12 minutes
+
+### Où sont créés les morceaux
+
+Les morceaux sont enregistrés dans un sous-dossier créé à côté du fichier d'origine.
+
+Exemple :
+
+```text
+input/reunion-client.m4a
+```
+
+peut produire :
+
+```text
+input/reunion-client_chunks/
+├── reunion-client_part00.wav
+├── reunion-client_part01.wav
+└── reunion-client_part02.wav
+```
+
+Le nommage suit cette logique :
+
+- `_chunks` pour le dossier des morceaux
+- `_part00`, `_part01`, `_part02` pour l'ordre des segments
+
+### Ce qui est transcrit au final
+
+Même si plusieurs morceaux sont créés, le résultat final reste un seul fichier texte.
+
+Exemple :
+
+```text
+output/reunion-client.txt
+```
+
+Le script concatène les transcriptions des morceaux dans l'ordre, avec des sauts de ligne entre les blocs.
+
+### Important à savoir
+
+- Le chunking ne se déclenche pas pour les fichiers de 20 minutes ou moins.
+- Les morceaux sont créés en `.wav`, même si ton fichier d'origine est en `.m4a` ou `.mp3`.
+- Le découpage est purement chronologique : le script ne détecte pas les silences ni les changements de sujet.
+- Les dossiers de chunks sont ignorés par `.gitignore`, donc ils ne sont pas censés partir sur GitHub.
+
 ## Ce que fait exactement le script
 
 Le fichier [app/transcribe.py](/Users/franckwystyrk/transcriber_full/app/transcribe.py:1) :
